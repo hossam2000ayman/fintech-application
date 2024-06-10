@@ -1,9 +1,6 @@
 package com.example.fintechapplication.service;
 
-import com.example.fintechapplication.dto.AccountAmount;
-import com.example.fintechapplication.dto.AccountName;
-import com.example.fintechapplication.dto.AccountNameAmount;
-import com.example.fintechapplication.dto.TransactionAmountTransactionAt;
+import com.example.fintechapplication.dto.*;
 import com.example.fintechapplication.entity.Account;
 import com.example.fintechapplication.entity.Transaction;
 
@@ -21,5 +18,8 @@ public interface AccountService {
 
     AccountNameAmount checkBalance(Long accountId);
 
-    List<TransactionAmountTransactionAt> checkTransactions(Long accountId);
+    AccountNameTransaction checkTransactions(Long accountId);
+
+    List<Account> checkAllAccounts();
+
 }

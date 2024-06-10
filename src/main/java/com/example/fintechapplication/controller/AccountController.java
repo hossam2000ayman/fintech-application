@@ -1,9 +1,6 @@
 package com.example.fintechapplication.controller;
 
-import com.example.fintechapplication.dto.AccountAmount;
-import com.example.fintechapplication.dto.AccountName;
-import com.example.fintechapplication.dto.AccountNameAmount;
-import com.example.fintechapplication.dto.TransactionAmountTransactionAt;
+import com.example.fintechapplication.dto.*;
 import com.example.fintechapplication.entity.Account;
 import com.example.fintechapplication.entity.Transaction;
 import com.example.fintechapplication.service.AccountService;
@@ -57,8 +54,14 @@ public class AccountController {
 
     @GetMapping("/{accountId}/transactions")
     @ApiOperation(value = "Check All Transaction")
-    public List<TransactionAmountTransactionAt> checkTransactions(@PathVariable Long accountId) {
+    public AccountNameTransaction checkTransactions(@PathVariable Long accountId) {
         return accountService.checkTransactions(accountId);
+    }
+
+    @GetMapping()
+    @ApiOperation(value = "Check All Accounts")
+    public List<Account> checkAccounts(){
+        return accountService.checkAllAccounts();
     }
 
 }

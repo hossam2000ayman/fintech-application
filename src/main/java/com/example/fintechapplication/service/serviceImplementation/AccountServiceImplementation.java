@@ -1,9 +1,6 @@
 package com.example.fintechapplication.service.serviceImplementation;
 
-import com.example.fintechapplication.dto.AccountAmount;
-import com.example.fintechapplication.dto.AccountName;
-import com.example.fintechapplication.dto.AccountNameAmount;
-import com.example.fintechapplication.dto.TransactionAmountTransactionAt;
+import com.example.fintechapplication.dto.*;
 import com.example.fintechapplication.entity.Account;
 import com.example.fintechapplication.entity.Transaction;
 import com.example.fintechapplication.exception.AccountNotFoundException;
@@ -30,7 +27,7 @@ public class AccountServiceImplementation implements AccountService {
     @Override
     public AccountNameAmount openAccount(Account account) {
         accountRepository.save(account);
-        return Optional.of(account).stream().map(account1 -> new AccountNameAmount(account1.getAccountName(), account.getBalance())).findFirst().get();
+        return Optional.of(account).stream().map(account1 -> new AccountNameAmount(account1.getId(), account1.getAccountName(), account.getBalance())).findFirst().get();
     }
 
     @Override
@@ -39,7 +36,7 @@ public class AccountServiceImplementation implements AccountService {
         if (accountOptional.isEmpty()) throw new AccountNotFoundException("Account not found");
         accountOptional.get().setAccountName(newAccount.accountName());
         accountRepository.saveAndFlush(accountOptional.get());
-        return accountOptional.stream().map(account -> new AccountNameAmount(account.getAccountName(), account.getBalance())).findFirst().get();
+        return accountOptional.stream().map(account -> new AccountNameAmount(account.getId(), account.getAccountName(), account.getBalance())).findFirst().get();
     }
 
     @Override
@@ -76,17 +73,25 @@ public class AccountServiceImplementation implements AccountService {
     public AccountNameAmount checkBalance(Long accountId) {
         Optional<Account> account = accountRepository.findById(accountId);
         if (account.isEmpty()) throw new AccountNotFoundException("Account not found");
-        return account.stream().map(account1 -> new AccountNameAmount(account1.getAccountName(), account1.getBalance())).findFirst().get();
+        return account.stream().map(account1 -> new AccountNameAmount(account1.getId(), account1.getAccountName(), account1.getBalance())).findFirst().get();
     }
 
     @Override
-    public List<TransactionAmountTransactionAt> checkTransactions(Long accountId) {
+    public AccountNameTransaction checkTransactions(Long accountId) {
         if (transactionRepository.findAllByAccount_Id(accountId).isEmpty())
             throw new AccountNotFoundException("Account Not Found");
-        return transactionRepository.findAllByAccount_Id(accountId)
+        String name = accountRepository.findById(accountId).get().getAccountName();
+
+       List<TransactionAmountTransactionAt> transactions =  transactionRepository.findAllByAccount_Id(accountId)
                 .stream()
                 .map(transaction -> new TransactionAmountTransactionAt(transaction.getAmount(), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss a").format(transaction.getTransactionAt())))
                 .collect(Collectors.toList());
+       return new AccountNameTransaction(name , transactions);
 
+    }
+
+    @Override
+    public List<Account> checkAllAccounts() {
+        return accountRepository.findAll();
     }
 }
